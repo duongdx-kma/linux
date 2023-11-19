@@ -1,0 +1,22 @@
+---
+
+- name: Web server group
+  hosts: web_servers
+  become: yes
+  tasks:
+    - name: Install httpd
+      ansible.builtin.yum:
+        name: httpd
+        state: present
+
+    - name: Start Service
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: copy file
+      ansible.builtin.copy:
+        src: index.html
+        dest: /var/www/html/
+        backup: yes

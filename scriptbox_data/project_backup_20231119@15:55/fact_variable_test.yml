@@ -1,0 +1,20 @@
+- name: Test fact variable
+  hosts: all
+  #if disable gathering facts => we can't get facts_variable
+  #gather_facts: False
+  tasks:
+    - name: debug printing data
+      debug:
+        var: ansible_distribution
+    
+    - name: debug printing processor
+      debug:
+        var: ansible_processor[2]
+
+    - name: printing RAM memory
+      debug:
+        var: ansible_memory_mb.real.free
+
+    - name: debug printing ansible_interfaces
+      debug:
+        var: ansible_interfaces[2]

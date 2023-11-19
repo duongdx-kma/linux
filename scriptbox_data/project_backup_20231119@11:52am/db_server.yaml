@@ -1,0 +1,38 @@
+---
+
+- name: Database server group
+  hosts: db_servers
+  become: yes
+  tasks:
+    - name: Install mariadb-server
+      ansible.builtin.yum:
+        name: mariadb-server
+        state: present
+    
+    - name: Install pymysql
+      ansible.builtin.yum:
+        name: python3-pymysql
+        state: present
+
+    - name: Start mariadb service
+      ansible.builtin.service:
+        name: mariadb
+        state: started
+        enabled: true
+  
+    - name: Create a new database with name 'accounts'
+      mysql_db:
+        name: accounts
+        login_user: root
+        login_password: 123456
+        state: present
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+
+    - name: Create user with password, all database privileges and 'WITH GRANT OPTION' in 'accounts'
+      community.mysql.mysql_user:
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        state: present
+        name: duongdx
+        password: '123456'
+        priv:
+          '*.*': 'ALL,GRANT'

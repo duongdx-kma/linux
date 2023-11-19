@@ -1,0 +1,27 @@
+all:
+  hosts:
+    web01:
+      ansible_host: 192.168.56.79
+      ansible_user: devops
+      ansible_ssh_private_key_file: clientkey.pem
+    web02:
+      ansible_host: 192.168.56.80
+      ansible_user: devops
+      ansible_ssh_private_key_file: clientkey.pem
+    db01:
+      ansible_host: 192.168.56.81
+      ansible_user: devops
+      ansible_ssh_private_key_file: clientkey.pem
+  children:
+    web_servers:
+      hosts:
+        web01:
+        web02:
+    db_servers:
+      hosts:
+        db01:
+    
+    mix_group:
+      children:
+        web_servers:
+        db_servers:

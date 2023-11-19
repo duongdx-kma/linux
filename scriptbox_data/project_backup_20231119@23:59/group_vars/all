@@ -1,0 +1,12 @@
+db_name: ansible_database_v2
+db_login_user: root
+db_password: "123456"
+
+USER: common_user
+COMMENT: varible from group-vars-all
+
+ntp0: 0.asia.pool.ntp.org
+ntp1: 1.asia.pool.ntp.org
+ntp2: 2.asia.pool.ntp.org
+ntp3: 3.asia.pool.ntp.org
+

@@ -1,0 +1,21 @@
+- name: create new OS user
+  hosts: all
+  become: yes
+  # variable priority: playbook_var > host_vers/host_name  > group_vars/group_name > group_vars/all
+  #vars:
+    #USER: playuser
+    #COMMENT: variable from playbook
+  tasks:
+    - name: create new user
+      ansible.builtin.user:
+        name: "{{USER}}"
+        comment: "{{COMMENT}}"
+      register: output_user
+
+    - name: debug step - user name
+      debug:
+        var: output_user.name
+
+    - name: debug step - comment about user
+      debug:
+        var: output_user.comment

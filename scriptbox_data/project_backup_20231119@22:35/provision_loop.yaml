@@ -1,0 +1,78 @@
+- name: provision server
+  hosts: all
+  become: yes
+  tasks:
+    - name: install ntp in CentOS
+      yum:
+        name: "{{item}}"
+        state: present
+      when: ansible_distribution == "CentOS"
+      loop:
+        - chrony
+        - git
+        - zip
+        - unzip
+        - wget
+    - name: install ntp in Ubuntu
+      apt:
+        name: "{{item}}"
+        state: present
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+      loop:
+        - ntp
+        - git
+        - zip
+        - unzip
+        - wget
+
+    - name: start service in CentOS
+      service:
+        name: chronyd
+        state: started
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+
+    - name: start service in Ubuntu
+      service:
+        name: ntp
+        state: started
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+    - name: banner file
+      copy:
+        content: "This content is managed by Ansible - dont change it"
+        dest: /etc/motd
+
+    - name: copy file with template CentOS
+      template:
+        src: templates/ntpconf_centos
+        dest: /etc/chrony.conf
+        backup: yes
+      when: ansible_distribution == "CentOS"
+
+    - name: copy file with template Ubuntu
+      template:
+        src: templates/ntpconf_ubuntu
+        dest: /etc/ntp.conf
+        backup: yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: restart service in CentOS
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "CentOS"
+
+    - name: restart service in Ubuntu
+      service:
+        name: ntp
+        state: restarted
+        enabled: yes
+      when: ansible_distribution == "Ubuntu"
+    
+    - name: create new folder
+      file:
+        path: /tmp/new_directory_ansible
+        state: directory
