@@ -1,0 +1,50 @@
+- name: ansible test provision aws services
+  hosts: localhost
+  gather_facts: False
+  vars:
+    region: ap-southeast-1
+    ansible_python_interpreter: /usr/bin/python3.6    
+  tasks:
+    - name: create s3 bucket
+      s3_bucket:
+        name: duongdx-my-s3-bucket
+        region: "{{region}}"
+        state: absent
+        force: true
+    - name: provision key
+      # vars:
+       # ansible_python_interpreter: /usr/bin/python3
+      ec2_key:
+        region: "{{region}}"
+        name: testing_key
+      register: output_key
+      notify:
+      - save pem key
+    
+    - name: start an instance
+      ec2_instance:
+        #count: 1
+        key_name: "{{output_key.key.name}}"
+        #vpc_subnet_id: default
+        instance_type: t2.micro
+        security_group: default
+        region: "{{region}}"
+        #network:
+         #assign_public_ip: true
+        image_id: ami-02453f5468b897e31
+        tags:
+          Name: "ansible-compute-instance"
+          Environment: Testing
+
+    - name: debug key inserted
+      debug:
+        var: output_key
+  
+  handlers: 
+    - name: save pem key
+      become: yes
+      delegate_to: localhost
+      copy:
+        content: "{{output_key.key.private_key}}"
+        dest: /tmp/testing_key.pem 
+      when: output_key.key != ""

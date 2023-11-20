@@ -1,0 +1,11 @@
+- name: provision server
+  hosts: all
+  become: yes
+  roles:
+    - role: post-install
+      # priority: playbook > vars > default
+      vars: 
+        ntp0: 0.sg.pool.ntp.org
+        ntp1: 1.sg.pool.ntp.org
+        ntp2: 2.sg.pool.ntp.org
+        ntp3: 3.sg.pool.ntp.org
