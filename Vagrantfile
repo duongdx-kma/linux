@@ -27,4 +27,35 @@ Vagrant.configure("2") do |config|
         db01.vm.network "private_network", ip: "192.168.56.81"
         db01.vm.hostname = "db01"
   end
+
+  #start: docker engine
+  config.vm.define "docker" do |docker|
+    docker.vm.box = "ubuntu/bionic64"
+    docker.vm.network "private_network", ip: "192.168.56.88"
+    docker.vm.hostname = "docker"
+    docker.vm.synced_folder "./docker_data", "/home/vagrant/docker_data", :mount_options => ["dmode=777", "fmode=666"]
+    
+    docker.vm.provider "virtualbox" do |vb|
+      # Customize the amount of memory on the VM:
+      vb.memory = "2048"
+      vb.cpus = "2"
+    end
+  end
+  #end: docker engine
+  
+  #start: terraform
+  config.vm.define "terraform" do |terraform|
+    terraform.vm.box = "geerlingguy/centos7"
+    terraform.vm.network "private_network", ip: "192.168.56.89"
+    terraform.vm.hostname = "terraform"
+    terraform.vm.synced_folder "./terraform_data", "/home/vagrant/terraform_data", :mount_options => ["dmode=777", "fmode=666"]
+
+    terraform.vm.provider "virtualbox" do |vb|
+      # Customize the amount of memory on the VM:
+      vb.memory = "2048"
+      vb.cpus = "2"
+    end
+  end
+  #end: terraform engine
+
 end
